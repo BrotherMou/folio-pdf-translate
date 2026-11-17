@@ -1,6 +1,6 @@
 # Folio PDF Translate
 
-本项目基于 [Alonemo-Nnqc/Folio](https://github.com/Alonemo-Nnqc/Folio) 二次开发，提取其 PDF 翻译引擎，配套本地 MCP 和 Agent Skill。主要面向 Windows，兼容 macOS。无需安装 Folio 应用。
+本项目基于 [Alonemo-Nnqc/Folio](https://github.com/Alonemo-Nnqc/Folio) 二次开发，提取其 PDF 翻译引擎，配套本地 MCP 和 Agent Skill。面向 Windows/macOS。无需安装 Folio 应用。
 
 当前 Agent 翻译可选中文字的英文 PDF，引擎保护原公式字形并排版，输出原文在左、译文在右的双语 PDF。默认包含面向 Adobe Acrobat 桌面版的双向悬浮高亮。公式和图片不参与高亮，文字保持可选，不增加覆盖正文的 Link/Widget。
 
