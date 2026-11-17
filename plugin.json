@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "folio-pdf-translate",
+  "version": "0.1.0",
+  "description": "独立提取 Folio 的 PDF 全文翻译引擎，提供本地 MCP 和 Skill，输出左右对照的双语 PDF。",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "双语 PDF 全文翻译",
+        "shortDescription": "保留公式的双语 PDF 全文翻译",
+        "longDescription": "本地运行独立翻译引擎，生成原文在左、译文在右的双语文件。翻译服务由用户选择，结果需要公式与排版检查。",
+        "capabilities": [],
+        "defaultPrompt": "翻译这篇英文论文，保留公式并输出左右对照的双语 PDF。"
+      }
+    }
+  }
+}
