@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="assets/logo.svg" alt="Folio PDF Translate Logo" width="96" height="96">
+</p>
+
 # Folio PDF Translate
 
 本项目基于 [Alonemo-Nnqc/Folio](https://github.com/Alonemo-Nnqc/Folio) 二次开发，提取其 PDF 翻译引擎，配套本地 MCP 和 Agent Skill。面向 Windows/macOS。无需安装 Folio 应用。

@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64"><defs><linearGradient id="folio-pdf-translate-master-tile" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#2B7FFF" /><stop offset="1" stop-color="#155DFC" /></linearGradient></defs><rect width="64" height="64" rx="16" fill="url(#folio-pdf-translate-master-tile)" /><g fill="white"><title>Folio PDF Translate — English to Chinese</title>
+<path fill-rule="evenodd" d="M11 16 Q11 14 13 14 C20 14 25 16 30 19 V49 C25 46 20 44 13 44 Q11 44 11 42 Z M15 37 L19.4 24 H22.6 L27 37 H23.9 L23 34 H19 L18.1 37 Z M19.8 31.5 H22.2 L21 27.5 Z" />
+<path fill-rule="evenodd" d="M34 19 C39 16 44 14 51 14 Q53 14 53 16 V42 Q53 44 51 44 C44 44 39 46 34 49 Z M42 23 H45 V26 H50 V36 H45 V40 H42 V36 H37 V26 H42 Z M40 29 H42 V33 H40 Z M45 29 H47 V33 H45 Z" />
+</g></svg>
