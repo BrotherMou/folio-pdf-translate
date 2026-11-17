@@ -156,7 +156,14 @@ python -m unittest discover -s tests -v
 
 这里也应使用项目 Python。`verify_install.py` 使用自制输入、固定测试译文，通过真实 stdio MCP 完成原生引擎到悬浮 PDF 的流程，不调用翻译 API，不代表模型翻译质量评测。测试在临时目录运行；不需要用户论文。
 
-验证边界和本次实际结果见 [VALIDATION.md](VALIDATION.md)。Windows workflow 已提供，但未运行的 CI 不能视为 Windows 已通过。实际 Adobe 交互不能由 PDF 结构检查或模拟 JavaScript 测试替代。
+2026-11-17，提交 [`3601d00`](https://github.com/BrotherMou/folio-pdf-translate/commit/3601d002b8ba9010684cc09c5662d696221294f1) 已在 GitHub Actions 的 Windows 和 macOS 环境通过完整检查：
+
+| 平台 | 依赖安装与引擎构建 | 真实 stdio MCP 集成 | 回归测试 | CI 记录 |
+| --- | --- | --- | --- | --- |
+| Windows（win-x64） | 通过 | 通过 | 23 项通过，0 项跳过 | [Windows engine](https://github.com/BrotherMou/folio-pdf-translate/actions/runs/44010883480) |
+| macOS | 通过 | 通过 | 23 项通过，0 项跳过 | [macOS engine](https://github.com/BrotherMou/folio-pdf-translate/actions/runs/44010883479) |
+
+两套 CI 均已上传引擎构建产物。Windows 还通过了原生 PDF 输出自检。上述结果验证构建和程序集成，不代表所有系统版本、Windows ARM64、Agent 客户端配置或 Adobe 桌面交互均已验证。实际 Adobe 悬浮高亮和拖选复制不能由 PDF 结构检查或模拟 JavaScript 测试替代。完整范围见 [VALIDATION.md](VALIDATION.md)。
 
 更新 Python 依赖时修改 `pyproject.toml` / `requirements-build.in`，使用维护工具 uv 重新生成锁文件，并在干净环境测试：
 
