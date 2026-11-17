@@ -216,7 +216,7 @@ Codex 当前官方用户级目录是 `~/.agents/skills/`，安装目标为该目
 - `get_translation_status`
 - `cancel_translation`
 
-确认客户端发现 `folio-pdf-translate` Skill。若客户端连接可用，再从客户端用仓库自制的 `examples/formula-sample.pdf` 创建 `service="agent"` 试译任务，输出到 `output/` 下的唯一新目录。由当前 Agent 领取并翻译、回填，直到完成，并检查 `dual_pdf`、`coverage_report`、`hover_report`。不要将等待 Agent 回填误判为引擎卡死。具体翻译和公式占位符规则按 [Skill](skills/folio-pdf-translate/SKILL.md) 执行。
+确认客户端发现 `folio-pdf-translate` Skill。若客户端连接可用，再从客户端用仓库自制的 `examples/formula-sample.pdf` 创建 `service="agent"` 试译任务，输出到 `output/` 下的唯一新目录。由当前 Agent 领取并翻译、回填，直到完成，并核对 `primary_artifact.path` 指向悬浮双语 PDF、`primary_artifact.kind="bilingual_hover_pdf"`，再检查 `artifacts.coverage_report`、`artifacts.hover_report`。默认只交付该主产物；普通双语版、纯译文版、预览及报告保留供内部检查。不要将等待 Agent 回填误判为引擎卡死。具体翻译和公式占位符规则按 [Skill](skills/folio-pdf-translate/SKILL.md) 执行。
 
 交付时简要报告：
 

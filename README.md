@@ -132,13 +132,15 @@ Agent 依次调用：
 2. `get_pending_translations(job_id)`，自行翻译每个句子，结合 `paragraph_source` 理解上下文。
 3. `submit_translations(job_id, request_id, translations)`，按原 ID 回填，逐字保留 `{vN}` 和出现次数；不跨 ID 合并或移动译文。
 4. 循环领取/提交，查询 `get_translation_status`，直到 `state="completed"`。`waiting_for_translation` 表示等待 Agent，`building_hover` 表示尚未完成交互层。
-5. 检查输出和报告，再交付 PDF。
+5. 检查输出和报告，再只交付 `primary_artifact.path` 指向的一份 PDF。
 
 `pages="1,3-5"` 用于试译；其余页保留原文。全文翻译省略 `pages`。用户取消时使用 `cancel_translation`。新任务创建独立输出目录，不覆盖源文件。
 
-| artifact | 内容 |
+下表是 `artifacts` 内部文件索引，交付入口统一使用 `primary_artifact.path`。
+
+| 内部字段 | 内容 |
 | --- | --- |
-| `dual_pdf` | 默认交付的双语悬浮 PDF |
+| `dual_pdf` | 最终双语 PDF；默认启用悬浮，显式关闭时为普通双语版 |
 | `plain_dual_pdf` | 启用悬浮时保留的普通双语 PDF |
 | `mono_pdf` | 纯译文 PDF |
 | `coverage_report` | 全部已分析文本块的页码、原文、分类和是否翻译 |
