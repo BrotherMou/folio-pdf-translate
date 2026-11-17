@@ -28,6 +28,7 @@ logs/
 *.log
 *.pdf
 !examples/formula-sample.pdf
+!examples/attention-is-all-you-need.en-zh.bilingual.pdf
 
 # Credentials and machine-local configuration
 .env

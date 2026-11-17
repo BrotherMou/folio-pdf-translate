@@ -4,6 +4,12 @@
 
 当前 Agent 翻译可选中文字的英文 PDF，引擎保护原公式字形并排版，输出原文在左、译文在右的双语 PDF。默认包含面向 Adobe Acrobat 桌面版的双向悬浮高亮。公式和图片不参与高亮，文字保持可选，不增加覆盖正文的 Link/Widget。
 
+## 翻译演示
+
+[下载《Attention Is All You Need》中英双语 PDF](examples/attention-is-all-you-need.en-zh.bilingual.pdf)（15 页，约 3.1 MB）。由当前 Agent 按 `folio-pdf-translate` Skill，通过 MCP 分批翻译，原文在左、中文在右，包含 282 组句子高亮。
+
+请下载后用 Adobe Acrobat 桌面版测试悬浮和文字拖选复制；GitHub 网页预览不用于验证交互。本演示有 3 处高亮定位排除、少量保留英文的短标签，并包含两处图形数据流修复。论文来源、处理步骤、验证结果和限制见 [演示说明](examples/README.md)。
+
 ## 致谢与项目来源
 
 感谢 **Alonemo-Nnqc** 及 Folio 贡献者开源 PDF 解析、翻译、公式保护与排版实现。本项目的 Swift 和 C# 引擎基于这些代码提取和修改，并非从零实现。
@@ -175,6 +181,6 @@ uv pip compile pyproject.toml requirements-build.in --universal --python-version
 
 ## 仓库内容与许可
 
-源码目录包括 `server/`、`engine/`、`engine-windows/`、`skills/`、`scripts/`、`tests/` 和 `examples/`。仅保留自制 `examples/formula-sample.pdf`；不包含个人论文、译文、日志、虚拟环境或构建产物。`.gitignore` 排除这些文件，但不能代替发布前检查。Python 锁文件、NuGet 项目文件、资源和第三方声明应一起上传。
+源码目录包括 `server/`、`engine/`、`engine-windows/`、`skills/`、`scripts/`、`tests/` 和 `examples/`。PDF 文件仅保留自制 `examples/formula-sample.pdf` 和上述公开论文的双语演示。其他输入论文、译文、日志、虚拟环境和构建产物由 `.gitignore` 排除；发布前仍须检查实际文件。Python 锁文件、NuGet 项目文件、资源和第三方声明应一起上传。演示论文的来源及版权说明见 [examples/README.md](examples/README.md)，仓库代码的 MIT 许可不覆盖原论文。
 
 来源和修改范围见 [UPSTREAM.md](UPSTREAM.md)，上游 Folio 的 MIT 声明见 [LICENSE](LICENSE)，组合依赖说明见 [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md)。PyMuPDF/MuPDF 使用 AGPL 或商业许可，保留 MIT 文件不表示整个组合包只受 MIT 约束。发布或再分发时需遵守实际组件的许可。
