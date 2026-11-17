@@ -71,6 +71,9 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
         status = self.wait(first["job_id"])
         self.assertEqual(status["state"], "completed", status)
         self.assertEqual(set(status["artifacts"]), {"mono_pdf", "dual_pdf"})
+        self.assertEqual(status["primary_artifact"], {
+            "path": status["artifacts"]["dual_pdf"], "kind": "bilingual_pdf", "pages": None})
+        self.assertTrue(Path(status["artifacts"]["mono_pdf"]).is_file())
         self.assertTrue(status["review_required"])
         second = self.manager.start(str(self.source), str(self.root / "output"))
         second_status = self.wait(second["job_id"])
@@ -79,6 +82,13 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
         self.assertEqual(self.source.read_bytes(), original)
         restarted = JobManager(self.root / "state", self.engine)
         self.assertEqual(restarted.get(first["job_id"])["state"], "completed")
+        self.assertEqual(restarted.get(first["job_id"])["primary_artifact"], status["primary_artifact"])
+        # Existing completed jobs also expose one primary output after upgrading.
+        saved = self.root / "state" / (first["job_id"] + ".json")
+        legacy = json.loads(saved.read_text(encoding="utf-8"))
+        del legacy["primary_artifact"]
+        saved.write_text(json.dumps(legacy), encoding="utf-8")
+        self.assertEqual(restarted.get(first["job_id"])["primary_artifact"], status["primary_artifact"])
 
     def test_failure_and_credential_redaction(self):
         secret = "test-secret-value-should-not-persist"
@@ -91,6 +101,7 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
             del os.environ["FOLIO_TEST_SECRET"]
         self.assertEqual(status["state"], "failed")
         self.assertFalse(status["artifacts"])
+        self.assertIsNone(status["primary_artifact"])
         for path in [self.root / "state" / (first["job_id"] + ".json"),
                      Path(status["output_directory"]) / "engine.log"]:
             self.assertNotIn(secret, path.read_text(encoding="utf-8"))
@@ -101,9 +112,11 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
         with self.assertRaises(ValueError):
             self.manager.get("../../state")
         slow = self.manager.start(str(self.source), str(self.root / "output"), service="google", fields={"test-mode": "slow"})
+        self.assertIsNone(slow["primary_artifact"])
         fast = self.manager.start(str(self.source), str(self.root / "output"))
         self.manager.cancel(slow["job_id"])
         self.assertEqual(self.wait(slow["job_id"])["state"], "cancelled")
+        self.assertIsNone(self.manager.get(slow["job_id"])["primary_artifact"])
         self.assertEqual(self.wait(fast["job_id"])["state"], "completed")
 
     def test_selected_scanned_pages_are_rejected_and_warnings_persist(self):
@@ -119,6 +132,7 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
                                  fields={"test-mode": "warnings"})
         status = self.wait(job["job_id"])
         self.assertEqual(status["state"], "completed", status)
+        self.assertEqual(status["primary_artifact"]["pages"], "1")
         self.assertEqual(status["last_event"]["type"], "progress")
         self.assertEqual([warning["type"] for warning in status["warnings"]], ["notice", "problem"])
         restarted = JobManager(self.root / "state", self.engine)
@@ -156,6 +170,8 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
                         await asyncio.sleep(0.03)
                     self.assertEqual(status["state"], "completed", status)
                     self.assertEqual(set(status["artifacts"]), {"mono_pdf", "dual_pdf"})
+                    self.assertEqual(status["primary_artifact"], {
+                        "path": status["artifacts"]["dual_pdf"], "kind": "bilingual_pdf", "pages": None})
                     bad = await session.call_tool("get_translation_status", {"job_id": "../../outside"})
                     self.assertTrue(bad.isError)
         asyncio.run(scenario())

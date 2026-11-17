@@ -51,6 +51,12 @@ class HoverPipelineTests(unittest.TestCase):
                         break
                     time.sleep(.05)
                 self.assertEqual(status['state'], 'completed', status)
+                self.assertEqual(status['primary_artifact'], {
+                    'path': status['artifacts']['dual_pdf'], 'kind': 'bilingual_hover_pdf', 'pages': None})
+                self.assertTrue(status['primary_artifact']['path'].endswith('.dual.hover.pdf'))
+                for key in ('mono_pdf', 'plain_dual_pdf'):
+                    self.assertTrue(Path(status['artifacts'][key]).is_file())
+                    self.assertNotEqual(status['artifacts'][key], status['primary_artifact']['path'])
                 report = json.loads(Path(status['artifacts']['hover_report']).read_text(encoding='utf-8'))
                 self.assertGreaterEqual(report['sentence_pairs'], 2)
                 self.assertEqual(report['skipped'], [])

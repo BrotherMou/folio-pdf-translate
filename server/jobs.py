@@ -25,6 +25,16 @@ DEFAULT_STATE = ((Path(os.environ.get("LOCALAPPDATA", Path.home() / "AppData/Loc
                  if WINDOWS else Path.home() / "Library/Application Support/FolioPDFTranslate/jobs")
 
 
+def primary_artifact(status: dict) -> dict | None:
+    """One deliverable after completion; the artifact index remains internal."""
+    path = status.get("artifacts", {}).get("dual_pdf")
+    if status["state"] != "completed" or not path:
+        return None
+    return {"path": path,
+            "kind": "bilingual_hover_pdf" if status.get("hover_highlight") else "bilingual_pdf",
+            "pages": status.get("pages")}
+
+
 class JobManager:
     def __init__(self, state_dir: Path | None = None, engine: Path | None = None):
         self.state_dir = Path(state_dir or os.environ.get(
@@ -39,6 +49,7 @@ class JobManager:
         with self.lock:
             job["status"].update(changes, updated_at=time.time())
             status = job["status"]
+            status["primary_artifact"] = primary_artifact(status)
             self.state_dir.mkdir(parents=True, exist_ok=True, mode=0o700)
             target = self.state_dir / (status["job_id"] + ".json")
             temporary = target.with_suffix(".tmp")
@@ -160,6 +171,8 @@ class JobManager:
             if not path.is_file():
                 raise ValueError("Unknown job_id")
             status = json.loads(path.read_text(encoding="utf-8"))
+            # Older saved jobs predate the delivery marker; expose the same contract.
+            status["primary_artifact"] = primary_artifact(status)
             if status["state"] not in TERMINAL:
                 job = {"status": status}
                 return self._save(job, state="interrupted", error="Server stopped before the job finished")

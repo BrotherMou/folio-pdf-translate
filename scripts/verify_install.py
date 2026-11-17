@@ -92,6 +92,11 @@ async def verify_pipeline():
         if hashlib.sha256(source.read_bytes()).hexdigest() != before:
             raise RuntimeError('Source PDF changed.')
         a = status['artifacts']
+        if status.get('primary_artifact') != {'path': a['dual_pdf'],
+                'kind': 'bilingual_hover_pdf', 'pages': None}:
+            raise RuntimeError('The unique primary artifact must be the hover bilingual PDF.')
+        if not all(Path(a[key]).is_file() for key in ('mono_pdf', 'plain_dual_pdf')):
+            raise RuntimeError('Internal auxiliary PDFs are missing.')
         report = json.loads(Path(a['hover_report']).read_text(encoding='utf-8'))
         coverage = json.loads(Path(a['coverage_report']).read_text(encoding='utf-8'))
         if report['sentence_pairs'] != 2 or report['skipped'] or not coverage['blocks']:
@@ -105,6 +110,7 @@ async def verify_pipeline():
             if 'The displacement' not in text or '位移' not in text or '第二句话' not in text:
                 raise RuntimeError('Bilingual text is missing.')
         return {'mcp_tools': 5, 'translated_sentences': 2, 'hover_pairs': 2,
+                'primary_artifact': 'bilingual_hover_pdf', 'auxiliary_pdfs_retained': True,
                 'source_unchanged': True, 'text_layer_preserved': True,
                 'new_overlay_annotations': False, 'adobe_ui_verified': False}
 

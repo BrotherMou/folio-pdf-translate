@@ -23,6 +23,9 @@ mcp = FastMCP("folio-pdf-translate", lifespan=lifespan,
               "Agent to translate: start_translation, get_pending_translations, translate the returned items "
               "yourself, then submit_translations until completed. The engine handles PDF layout and formulas. "
               "External translation APIs are optional explicit services, never an automatic fallback. "
+              "After completion and review, deliver only primary_artifact.path by default (the hover bilingual PDF). "
+              "artifacts is an internal file index, not a delivery list. Keep auxiliary PDFs and previews internal; "
+              "provide alternate PDFs only when the user explicitly requests them. Selected-page jobs are partial translations. "
               "Outputs require formula/layout review and checking every keyword against the source PDF; "
               "Read coverage_report for all classified source blocks, including skipped text. Check headings, lists, algorithm prose and appendix text. Hover coverage and completion of returned batches do not prove all source content was included.")
 
@@ -44,7 +47,8 @@ def start_translation(input_path: str, output_directory: str, service: str = "ag
 
     input_path is an existing local PDF. output_directory receives a new unique
     task folder; source files are never overwritten. pages accepts 1,3-5; omitted
-    means all pages. Outputs are mono_pdf and dual_pdf. Unselected pages remain
+    means all pages. The unique deliverable is primary_artifact.path after completion and review.
+    It is null while unfinished or failed. Unselected pages remain
     untranslated in the output. Selected pages must contain extractable text;
     scanned/image-only pages require OCR outside this tool. service is a Folio translation provider ID.
     fields contains provider options. secret_env maps provider credential option
@@ -56,7 +60,10 @@ def start_translation(input_path: str, output_directory: str, service: str = "ag
     get_translation_status provides completion, failures and final paths.
     hover_highlight defaults to true with service=agent: translates individual sentence items,
     embeds Acrobat hover layers without overlay annotations, and excludes formulas/images.
-    dual_pdf is the interactive output; plain_dual_pdf and hover_report are also returned.
+    primary_artifact.kind is bilingual_hover_pdf by default, bilingual_pdf only when hover is disabled.
+    primary_artifact.pages records a selected-page translation; null means all pages.
+    artifacts is an internal index retained for compatibility and review, not a delivery list.
+    Keep mono_pdf, plain_dual_pdf and preview PDFs internal unless the user requests an alternate final PDF.
     Read coverage_report for all source blocks and hover_report for alignment exclusions. Adobe desktop hover and drag-copy require UI testing.
     Set hover_highlight=false for plain output or external translation services.
     Review formulas and every source keyword before delivery, including wrapped Keywords/Index terms lists.
@@ -67,7 +74,12 @@ def start_translation(input_path: str, output_directory: str, service: str = "ag
 
 @mcp.tool()
 def get_translation_status(job_id: str) -> CallToolResult:
-    """Read translation state/progress/errors and output artifact paths for a returned job_id."""
+    """Read state/progress/errors and the unique primary_artifact for a returned job_id.
+
+    Deliver only primary_artifact.path after state=completed and review. Default kind is
+    bilingual_hover_pdf. The artifacts index contains internal review/auxiliary files,
+    not additional deliverables. Do not deliver previews or partial jobs as a full translation.
+    """
     return result(manager.get(job_id))
 
 

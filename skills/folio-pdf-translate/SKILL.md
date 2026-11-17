@@ -5,7 +5,7 @@ description: 由当前 Agent 分批翻译可选中文字的英文 PDF，用独�
 
 # 双语 PDF 全文翻译
 
-默认由当前调用 Skill 的 Agent 自己翻译正文。独立 Folio 引擎负责 PDF 解析、公式保护和排版。默认英译中，交付左右对照的双语 PDF；用户指定语言时按其要求执行。
+默认由当前调用 Skill 的 Agent 自己翻译正文。独立 Folio 引擎负责 PDF 解析、公式保护和排版。默认英译中，只交付一份带双向悬浮高亮、左右对照的双语 PDF；用户指定语言或其他输出版本时按其要求执行。
 
 ## 调用方式
 
@@ -28,7 +28,7 @@ description: 由当前 Agent 分批翻译可选中文字的英文 PDF，用独�
 4. 调用 `submit_translations(job_id, request_id, translations)`，`translations` 是原条目 ID 到译文的映射。每个 ID 都必须回填。逐字保留全部 `{vN}` 及其出现次数，包括代表跨页或跨栏分隔的 `{v0}`；不重新生成公式。若 ID、空译文或占位符校验失败，修正该批译文后重交。其他提交错误先检查任务状态与错误原因；终态任务不能继续提交，输出文件系统不支持原子发布时应改用可写的本地 APFS/NTFS 目录新建任务，不反复重译。
 5. 继续领取、翻译和提交批次，并查询 `get_translation_status`。`waiting_for_translation` 表示等待 Agent 回填；空请求列表可能只是解析或排版尚未结束，不能当作完成。不用摘要代替正文，不自动转用翻译 API 或另起 Agent CLI。
 6. 试译完成后检查公式上下标、分数线、矩阵、符号和编号，以及遮挡、越界和遗漏。原文含 `Keywords`、`Key words` 或 `Index terms` 时，把该页纳入检查，逐项核对关键词译文，包含换行后的条目；不能将关键词作为作者信息跳过。若待译批次缺少关键词，应报告引擎遗漏，不能仅因所有已返回条目都已提交就认为翻译完整。同时核对章节标题、编号列表、算法的输入/输出与自然语言步骤、附录及页顶/页底正文；保护公式和代码语法不等于跳过整段算法说明。检查通过后省略 `pages` 执行全文流程。公式占位符数量一致不能代替视觉检查。
-7. 等待 `state="completed"`，检查全部页面概览及公式密集页面，交付 `artifacts.dual_pdf`。默认是内嵌悬浮高亮的双语 PDF；`building_hover` 表示还在生成交互层。逐页对照 `artifacts.coverage_report` 中所有文本块及 `translate=false` 的排除项；作者信息、参考文献、图内标签、公式和代码等排除项需按实际范围说明，正文误分类应修复后重跑。该报告记录版面分类，不是译文质量或全文完整性的自动证明。检查 `hover` 的覆盖统计及 `artifacts.hover_report` 的 `skipped`，如有未能定位的句子，说明范围，不能称为全部支持。`mapped_blocks/total_blocks` 只统计已翻译文本的高亮定位，不能作为全文无漏译的依据。需要普通双语 PDF 时可交 `plain_dual_pdf`，需要纯译文时交 `mono_pdf`。按实际检查情况说明问题。
+7. 等待 `state="completed"`，检查全部页面概览及公式密集页面，只交付 `primary_artifact.path` 指向的一份 PDF，默认 `primary_artifact.kind="bilingual_hover_pdf"`。`artifacts` 是内部文件索引，不是交付清单；`building_hover` 表示还在生成交互层。逐页对照 `artifacts.coverage_report` 中所有文本块及 `translate=false` 的排除项；作者信息、参考文献、图内标签、公式和代码等排除项需按实际范围说明，正文误分类应修复后重跑。该报告记录版面分类，不是译文质量或全文完整性的自动证明。检查 `hover` 的覆盖统计及 `artifacts.hover_report` 的 `skipped`，如有未能定位的句子，说明范围，不能称为全部支持。`mapped_blocks/total_blocks` 只统计已翻译文本的高亮定位，不能作为全文无漏译的依据。普通双语 PDF、纯译文 PDF、预览、试译文件和报告保留在任务目录供内部检查，不默认附加链接、复制到交付目录或打包给用户。只有用户明确要求普通双语版或纯译文版时，才额外提供 `artifacts.plain_dual_pdf` 或 `artifacts.mono_pdf`；不得把预览作为最终产物。显式关闭高亮时，主产物类型为 `bilingual_pdf`，应说明没有悬浮高亮。指定 `pages` 的试译不能冒充全文译文。旧版 MCP 若无 `primary_artifact` 字段，只有在任务完成、`hover_highlight=true` 且已核实 `artifacts.dual_pdf` 为悬浮版本时才用该路径作为兼容入口；不能改成交付全部文件。按实际检查情况说明问题。
 
 Agent 模式不需要额外翻译 API Key，也不读取其他 Agent 的登录信息。正文会进入当前 Agent 的上下文；是否联网、使用哪家模型及额度规则取决于当前 Agent，不能把 Agent 模式等同于离线翻译。
 
