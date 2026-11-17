@@ -175,7 +175,7 @@ class EngineTests(unittest.TestCase):
             self.assertIn(needle, combined)
         self.assertNotIn("range(n)", combined)
         self.assertNotIn("solve(matrix)", combined)
-        coverage = json.loads((self.directory / "output/translation-coverage.json").read_text())
+        coverage = json.loads((self.directory / "output/translation-coverage.json").read_text(encoding="utf-8"))
         self.assertTrue(any(not b["translate"] and "range(n)" in b["text"] for b in coverage["blocks"]))
 
     def test_real_pdf_outputs_preserve_source_and_pair_pages(self):

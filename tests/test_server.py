@@ -93,7 +93,7 @@ sys.exit(7 if request['fields'].get('test-mode') == 'failure' else 0)
         self.assertFalse(status["artifacts"])
         for path in [self.root / "state" / (first["job_id"] + ".json"),
                      Path(status["output_directory"]) / "engine.log"]:
-            self.assertNotIn(secret, path.read_text())
+            self.assertNotIn(secret, path.read_text(encoding="utf-8"))
 
     def test_cancellation_isolated_and_invalid_inputs(self):
         with self.assertRaises(ValueError):

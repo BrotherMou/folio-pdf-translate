@@ -100,7 +100,7 @@ class AgentExchangeTests(unittest.TestCase):
         request = envelope()
         request['items'] = [{'id': '1', 'source': 'See Fig. {v1}. It costs 3.6 s. Continue {v0} here.',
                              'kind': 'paragraph', 'is_short': False}]
-        (self.root / 'requests' / f'{REQUEST_ID}.json').write_text(json.dumps(request))
+        (self.root / 'requests' / f'{REQUEST_ID}.json').write_text(json.dumps(request), encoding='utf-8')
         (self.root / 'sentence-mode').touch()
         items = pending_requests(self.root)[0]['items']
         self.assertEqual([i['source'] for i in items], ['See Fig. {v1}.', 'It costs 3.6 s.', 'Continue {v0} here.'])
@@ -110,9 +110,9 @@ class AgentExchangeTests(unittest.TestCase):
             submit_response(self.root, REQUEST_ID, {**translated, items[0]['id']: '见图。'})
         self.assertFalse((self.root / 'alignments').exists())
         submit_response(self.root, REQUEST_ID, translated)
-        native = json.loads((self.root / 'responses' / f'{REQUEST_ID}.json').read_text())
+        native = json.loads((self.root / 'responses' / f'{REQUEST_ID}.json').read_text(encoding='utf-8'))
         self.assertEqual(native['translations'], {'1': ' '.join(values)})
-        alignment = json.loads((self.root / 'alignments' / f'{REQUEST_ID}.json').read_text())
+        alignment = json.loads((self.root / 'alignments' / f'{REQUEST_ID}.json').read_text(encoding='utf-8'))
         self.assertEqual(alignment['items'][0]['sentences'],
                          [{'source': i['source'], 'translation': t} for i, t in zip(items, values)])
         self.assertEqual(submit_response(self.root, REQUEST_ID, translated)['state'], 'already_submitted')

@@ -51,7 +51,7 @@ class HoverPipelineTests(unittest.TestCase):
                         break
                     time.sleep(.05)
                 self.assertEqual(status['state'], 'completed', status)
-                report = json.loads(Path(status['artifacts']['hover_report']).read_text())
+                report = json.loads(Path(status['artifacts']['hover_report']).read_text(encoding='utf-8'))
                 self.assertGreaterEqual(report['sentence_pairs'], 2)
                 self.assertEqual(report['skipped'], [])
                 with pymupdf.open(status['artifacts']['plain_dual_pdf']) as plain, pymupdf.open(status['artifacts']['dual_pdf']) as hover:
