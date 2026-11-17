@@ -1,0 +1,51 @@
+# Local Python environments and generated packaging files
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Native build products
+bin/
+obj/
+engine/.build/
+engine/.swiftpm/
+
+# Translation jobs, private inputs, outputs and diagnostics
+output/
+input/
+inputs/
+private/
+.jobs/
+.cache/
+tmp/
+logs/
+*.log
+*.pdf
+!examples/formula-sample.pdf
+
+# Credentials and machine-local configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+mcp.local.json
+config.local.*
+.codex/
+.agents/
+
+# Editor and operating-system files
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo

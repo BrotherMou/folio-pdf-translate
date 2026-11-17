@@ -1,0 +1,38 @@
+name: Windows engine
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+jobs:
+  native-smoke:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install locked dependencies and build the independent engine
+        shell: pwsh
+        run: ./scripts/setup.ps1
+      - name: Verify native PDF output
+        shell: pwsh
+        run: |
+          & ./bin/windows/pdf-translate-engine.exe --self-test
+          if ($LASTEXITCODE -ne 0) { throw 'Native smoke test failed.' }
+      - name: Verify the installed MCP and engine together
+        shell: pwsh
+        run: |
+          & ./.venv/Scripts/python.exe scripts/verify_install.py
+          if ($LASTEXITCODE -ne 0) { throw 'MCP installation check failed.' }
+          & ./.venv/Scripts/python.exe -m unittest discover -s tests -v
+          if ($LASTEXITCODE -ne 0) { throw 'Regression tests failed.' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-translate-engine-win-x64
+          path: bin/windows/

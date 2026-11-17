@@ -1,0 +1,30 @@
+name: macOS engine
+on:
+  workflow_dispatch:
+  push:
+  pull_request:
+jobs:
+  native-smoke:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Show Apple toolchain (Swift 6.2 or later required)
+        run: |
+          swift --version
+          xcrun --show-sdk-path
+      - name: Install locked dependencies and build the independent engine
+        run: sh scripts/setup.sh
+      - name: Verify the installed MCP and engine together
+        run: |
+          .venv/bin/python scripts/verify_install.py
+          .venv/bin/python -m unittest discover -s tests -v
+      - uses: actions/upload-artifact@v4
+        with:
+          name: pdf-translate-engine-macos
+          path: bin/

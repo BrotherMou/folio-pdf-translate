@@ -1,0 +1,48 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{hyperref}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{8pt}
+\begin{document}
+\begin{center}
+{\Large A Small Test of Formula-Preserving Translation}\\[6pt]
+Synthetic example for software verification --- not a research paper
+\end{center}
+\section{Reduced-order approximation}
+This document tests the translation of scientific prose while retaining mathematical symbols. The displacement field is represented by a linear combination of basis vectors. The reduced coordinates describe the contribution of each basis vector.
+\begin{equation}
+\mathbf{u}(t) \approx \mathbf{V}\mathbf{q}(t), \qquad
+\mathbf{V}\in\mathbb{R}^{n\times r},\quad r\ll n.
+\end{equation}
+The full model contains a mass matrix, a damping matrix, and a stiffness matrix. The external force depends on time. Projection reduces the dimension of the equation without changing the definition of these physical quantities.
+\begin{equation}
+\mathbf{M}\ddot{\mathbf{u}} + \mathbf{C}\dot{\mathbf{u}} + \mathbf{K}\mathbf{u} = \mathbf{f}(t).
+\end{equation}
+The reduced mass matrix is defined by $\mathbf{M}_r=\mathbf{V}^{\mathsf{T}}\mathbf{M}\mathbf{V}$. A similar construction applies to the stiffness matrix. The superscripts and subscripts in this sentence must remain intact.
+\section{Error measure}
+We measure the relative error over the observation interval. A small value indicates agreement between the full and reduced solutions. The fraction, integral signs, norm symbols, and integration limits should be preserved.
+\begin{equation}
+\varepsilon = \sqrt{\frac{\int_0^T \|\mathbf{u}(t)-\mathbf{V}\mathbf{q}(t)\|_2^2\,\mathrm{d}t}
+{\int_0^T \|\mathbf{u}(t)\|_2^2\,\mathrm{d}t}}.
+\end{equation}
+\newpage
+\section{Eigenvalue problem}
+The natural frequencies are obtained from a generalized eigenvalue problem. Here the eigenvector describes a vibration mode. The index identifies the mode and the squared angular frequency is the eigenvalue.
+\begin{equation}
+\mathbf{K}\boldsymbol{\phi}_i=\omega_i^2\mathbf{M}\boldsymbol{\phi}_i,
+\qquad \omega_i>0.
+\end{equation}
+For a two-dimensional example, the stiffness matrix is symmetric. Its off-diagonal entries are negative. Translation should preserve the matrix brackets, signs, and all four entries.
+\begin{equation}
+\mathbf{K}=\begin{bmatrix}2k&-k\\-k&k\end{bmatrix},\qquad
+\mathbf{M}=\begin{bmatrix}m&0\\0&m\end{bmatrix}.
+\end{equation}
+\section{Energy and verification}
+The total mechanical energy combines kinetic and elastic contributions. In the absence of damping and external forces, this energy remains constant.
+\begin{equation}
+E(t)=\tfrac12\dot{\mathbf{u}}^{\mathsf{T}}\mathbf{M}\dot{\mathbf{u}}
++\tfrac12\mathbf{u}^{\mathsf{T}}\mathbf{K}\mathbf{u},\qquad \frac{\mathrm{d}E}{\mathrm{d}t}=0.
+\end{equation}
+The verification compares the source PDF and translated PDF page by page. Equations are checked for missing characters, changed signs, and incorrect placement. A successful file export alone does not establish scientific correctness.
+\end{document}
